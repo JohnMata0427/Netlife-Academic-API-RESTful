@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +40,22 @@ public class User implements UserDetails {
 
     private boolean verified;
 
+    private boolean recoveryPassword;
+
+    private String company;
+
+    private String area;
+
+    private String position;
+
+    private Date birthdate;
+
+    private String image;
+
+    private boolean active;
+
+    private boolean deleted;
+
     private Timestamp createdAt;
 
     private Timestamp updatedAt;
@@ -60,7 +77,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return deleted;
     }
 
     @Override

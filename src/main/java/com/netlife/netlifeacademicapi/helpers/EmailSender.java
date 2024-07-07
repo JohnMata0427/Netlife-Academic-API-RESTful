@@ -36,4 +36,28 @@ public class EmailSender {
             System.out.println("Error al enviar el correo: " + e.getMessage());
         }
     }
+
+    public void recoveryPasswordEmail(String toUserMail, String verificationCode) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
+
+            helper.setTo(toUserMail);
+            helper.setSubject("Recuperación de contraseña de NetLife Academic");
+
+            String htmlMessage = "<h1>Recuperación de contraseña</h1>"
+                + "<p>Este es tu código de recuperación de contraseña: <strong>"
+                + verificationCode + "</strong></p>"
+                + "<br>"
+                + "<p>Si no solicitaste la recuperación de contraseña, contacta a soporte</p>";
+
+            helper.setText(htmlMessage, true);
+
+            mailSender.send(message);
+
+            System.out.println("Correo enviado exitosamente");
+        } catch (Exception e) {
+            System.out.println("Error al enviar el correo: " + e.getMessage());
+        }
+    }
 }

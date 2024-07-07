@@ -19,7 +19,7 @@ public class UserController {
 
     @PostMapping
     public Object createUser(@RequestBody User user) {
-        return userService.createUser(user.getEmail());
+        return userService.createUser(user.getEmail(), user.getRole());
     }
 
     @GetMapping
@@ -40,8 +40,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable String id) {
-        if (userService.deleteUser(id)) {
+    public ResponseEntity<?> deleteUserData(@PathVariable String id) {
+        if (userService.deleteUserData(id)) {
             return ResponseEntity.ok().body("User deleted successfully");
         }
         return ResponseEntity.status(404).body(ErrorResponse.builder()
@@ -50,5 +50,11 @@ public class UserController {
                 .error("Not Found")
                 .path("/api/users/" + id)
                 .build());
+    }
+
+    @PutMapping("/lock-user")
+    public ResponseEntity<?> deleteUser(@RequestBody User user) {
+        Object response = userService.deleteUser(user.getEmail());
+        return ResponseEntity.status(response instanceof User ? 200 : 404).body(response);
     }
 }

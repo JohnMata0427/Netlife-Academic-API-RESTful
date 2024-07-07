@@ -40,8 +40,7 @@ public class UserService {
     }
 
     @Transactional
-    public Object createUser(String email) {
-
+    public Object createUser(String email, Role role) {
         String verificationCode = ((Math.random() * 99999) + 100000 + "").substring(0, 6);
 
         if (userRepository.existsByEmail(email)) {
@@ -53,13 +52,25 @@ public class UserService {
                     .build();
         }
 
+        if (email == null) {
+            return ErrorResponse.builder()
+                    .message("El correo es requerido")
+                    .status(400)
+                    .error("Bad Request")
+                    .path("/users")
+                    .build();
+        }
+
         User user = User.builder()
                 .id(UUID.randomUUID().toString())
                 .email(email)
-                .role(Role.STUDENT)
+                .role(role)
                 .password(userBean.passwordEncoder().encode(UUID.randomUUID().toString().substring(0, 8)))
                 .verificationCode(verificationCode)
                 .verified(false)
+                .recoveryPassword(false)
+                .deleted(false)
+                .active(false)
                 .createdAt(new Timestamp(System.currentTimeMillis()))
                 .updatedAt(new Timestamp(System.currentTimeMillis()))
                 .build();
@@ -93,9 +104,37 @@ public class UserService {
     }
 
     @Transactional
-    public boolean deleteUser(String id) {
+    public boolean deleteUserData(String id) {
         if (!userRepository.existsById(id)) return false;
         userRepository.deleteById(id);
         return true;
+    }
+
+    @Transactional
+    public Object deleteUser(String email) {
+        if (!userRepository.existsByEmail(email)) {
+            return ErrorResponse.builder()
+                    .message("El usuario con correo " + email + " no se encuentra registrado")
+                    .status(404)
+                    .error("Not Found")
+                    .path("/users")
+                    .build();
+        }
+
+        if (email == null) {
+            return ErrorResponse.builder()
+                    .message("El correo es requerido")
+                    .status(400)
+                    .error("Bad Request")
+                    .path("/users")
+                    .build();
+        }
+
+        User user = userRepository.findByEmail(email).get();
+        user.setDeleted(true);
+        user.setActive(false);
+        user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        return userRepository.save(user);
     }
 }
