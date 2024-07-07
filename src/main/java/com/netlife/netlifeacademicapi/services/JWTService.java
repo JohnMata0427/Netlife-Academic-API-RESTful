@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,11 @@ import javax.crypto.SecretKey;
 @Service
 public class JWTService {
 
-    private static final String SECRET_KEY = "WEBAPPLICATIONNETLIFEACADEMICDFSJDFEIDBEA123456789";
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
+
+    @Value("${jwt.expiration}")
+    private int EXPIRATION;
 
     public String getToken(UserDetails user) {
         return getToken(new HashMap<>(), user);
@@ -29,7 +35,7 @@ public class JWTService {
                 .claims(extraClaims)
                 .subject(user.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION * 24))
                 .signWith(getKey(), Jwts.SIG.HS256)
                 .compact();
     }

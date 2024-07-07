@@ -21,17 +21,12 @@ public class User implements UserDetails {
     @Id
     private String id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private String lastname;
 
     @Column(unique = true, nullable = false)
     private String email;
-
-    @Column(unique = true)
-    private String phone;
 
     @Column(nullable = false)
     private String password;
@@ -40,7 +35,9 @@ public class User implements UserDetails {
 
     private String token;
 
-    private boolean confirmEmail;
+    private String verificationCode;
+
+    private boolean verified;
 
     private Timestamp createdAt;
 

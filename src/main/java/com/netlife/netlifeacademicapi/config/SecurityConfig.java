@@ -28,14 +28,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/api/**").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .sessionManagement(sessionManagement ->
-                        sessionManagement
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuth, UsernamePasswordAuthenticationFilter.class)
+                // .sessionManagement(sessionManagement ->
+                //         sessionManagement
+                //                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                // )
+                // .authenticationProvider(authenticationProvider)
+                // .addFilterBefore(jwtAuth, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }

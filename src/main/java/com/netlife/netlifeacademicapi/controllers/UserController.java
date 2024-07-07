@@ -1,5 +1,6 @@
 package com.netlife.netlifeacademicapi.controllers;
 
+import com.netlife.netlifeacademicapi.models.ErrorResponse;
 import com.netlife.netlifeacademicapi.models.User;
 import com.netlife.netlifeacademicapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,15 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/users")
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @PostMapping
+    public Object createUser(@RequestBody User user) {
+        return userService.createUser(user.getEmail());
+    }
 
     @GetMapping
     public List<User> getAllUsers() {
@@ -29,15 +35,20 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user) {
-        Optional<User> updatedUser = userService.updateUser(id, user);
-        return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Object updatedUser = userService.updateUser(id, user);
+        return updatedUser instanceof User ? ResponseEntity.ok((User) updatedUser) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable String id) {
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
         if (userService.deleteUser(id)) {
             return ResponseEntity.ok().body("User deleted successfully");
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(404).body(ErrorResponse.builder()
+                .message("User not found")
+                .status(404)
+                .error("Not Found")
+                .path("/api/users/" + id)
+                .build());
     }
 }

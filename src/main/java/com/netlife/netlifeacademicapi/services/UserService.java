@@ -1,15 +1,14 @@
 package com.netlife.netlifeacademicapi.services;
 
+import com.netlife.netlifeacademicapi.helpers.EmailSender;
 import com.netlife.netlifeacademicapi.helpers.UserBean;
+import com.netlife.netlifeacademicapi.models.ErrorResponse;
 import com.netlife.netlifeacademicapi.models.Role;
 import com.netlife.netlifeacademicapi.models.User;
 import com.netlife.netlifeacademicapi.repositories.IUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -28,10 +27,7 @@ public class UserService {
     private UserBean userBean;
 
     @Autowired
-    private JWTService jwtService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    EmailSender emailSender;
 
     @Transactional
     public List<User> getAllUsers() {
@@ -44,40 +40,56 @@ public class UserService {
     }
 
     @Transactional
-    public User registerUser(User request) {
+    public Object createUser(String email) {
+
+        String verificationCode = ((Math.random() * 99999) + 100000 + "").substring(0, 6);
+
+        if (userRepository.existsByEmail(email)) {
+            return ErrorResponse.builder()
+                    .message("El correo " + email + " ya se encuentra registrado")
+                    .status(400)
+                    .error("Bad Request")
+                    .path("/users")
+                    .build();
+        }
 
         User user = User.builder()
-                        .id(UUID.randomUUID().toString())
-                        .name(request.getName())
-                        .lastname(request.getLastname())
-                        .email(request.getEmail())
-                        .phone(request.getPhone())
-                        .password(userBean.passwordEncoder().encode(request.getPassword()))
-                        .role(Role.STUDENT)
-                        .token(jwtService.getToken(request))
-                        .confirmEmail(false)
-                        .createdAt(new Timestamp(System.currentTimeMillis()))
-                        .updatedAt(new Timestamp(System.currentTimeMillis()))
-                        .build();
+                .id(UUID.randomUUID().toString())
+                .email(email)
+                .role(Role.STUDENT)
+                .password(userBean.passwordEncoder().encode(UUID.randomUUID().toString().substring(0, 8)))
+                .verificationCode(verificationCode)
+                .verified(false)
+                .createdAt(new Timestamp(System.currentTimeMillis()))
+                .updatedAt(new Timestamp(System.currentTimeMillis()))
+                .build();
+
+        emailSender.verificationCodeEmail(email, verificationCode);
+
         return userRepository.save(user);
     }
 
     @Transactional
-    public Optional<User> updateUser(String id, User user) {
-        if (!userRepository.existsById(id)) return Optional.empty();
-        User lastUser = userRepository.findById(id).get();
-        user.setId(id);
-        user.setName(user.getName() == null ? lastUser.getName() : user.getName());
-        user.setLastname(user.getLastname() == null ? lastUser.getLastname() : user.getLastname());
-        user.setEmail(user.getEmail() == null ? lastUser.getEmail() : user.getEmail());
-        user.setPhone(user.getPhone() == null ? lastUser.getPhone() : user.getPhone());
-        user.setPassword(user.getPassword() == null ? lastUser.getPassword() : userBean.passwordEncoder().encode(user.getPassword()));
-        user.setRole(user.getRole() == null ? lastUser.getRole() : user.getRole());
-        user.setToken(lastUser.getToken());
-        user.setConfirmEmail(lastUser.isConfirmEmail());
-        user.setCreatedAt(lastUser.getCreatedAt());
+    public Object updateUser(String id, User request) {
+        if (!userRepository.existsById(id)) {
+            return ErrorResponse.builder()
+                    .message("El usuario con id " + id + " no se encuentra registrado")
+                    .status(404)
+                    .error("Not Found")
+                    .path("/users/" + id)
+                    .build();
+        }
+
+        User user = userRepository.findById(id).get();
+
+        if (request.getName() != null) user.setName(request.getName());
+        if (request.getLastname() != null) user.setLastname(request.getLastname());
+        if (request.getPassword() != null) user.setPassword(userBean.passwordEncoder().encode(request.getPassword()));
+        if (request.getRole() != null) user.setRole(request.getRole());
+        
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-        return Optional.of(userRepository.save(user));
+
+        return userRepository.save(user);
     }
 
     @Transactional
@@ -85,13 +97,5 @@ public class UserService {
         if (!userRepository.existsById(id)) return false;
         userRepository.deleteById(id);
         return true;
-    }
-
-    @Transactional
-    public Optional<?> loginUser(String email, String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-        UserDetails user = userRepository.findByEmail(email).orElseThrow();
-        String token = jwtService.getToken(user);
-        return Optional.of(token);
     }
 }
