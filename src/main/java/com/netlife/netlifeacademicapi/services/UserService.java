@@ -3,6 +3,7 @@ package com.netlife.netlifeacademicapi.services;
 import com.netlife.netlifeacademicapi.helpers.EmailSender;
 import com.netlife.netlifeacademicapi.helpers.UserBean;
 import com.netlife.netlifeacademicapi.models.ErrorResponse;
+import com.netlife.netlifeacademicapi.models.MessageResponse;
 import com.netlife.netlifeacademicapi.models.Role;
 import com.netlife.netlifeacademicapi.models.User;
 import com.netlife.netlifeacademicapi.repositories.IUserRepository;
@@ -97,6 +98,12 @@ public class UserService {
         if (request.getLastname() != null) user.setLastname(request.getLastname());
         if (request.getPassword() != null) user.setPassword(userBean.passwordEncoder().encode(request.getPassword()));
         if (request.getRole() != null) user.setRole(request.getRole());
+        if (request.getCompany() != null) user.setCompany(request.getCompany());
+        if (request.getArea() != null) user.setArea(request.getArea());
+        if (request.getPosition() != null) user.setPosition(request.getPosition());
+        if (request.getBirthdate() != null) user.setBirthdate(request.getBirthdate());
+        if (request.getImage() != null) user.setImage(request.getImage());
+        if (request.isDeleted()) user.setDeleted(!request.isDeleted());
         
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
@@ -117,7 +124,7 @@ public class UserService {
                     .message("El usuario con correo " + email + " no se encuentra registrado")
                     .status(404)
                     .error("Not Found")
-                    .path("/users")
+                    .path("/users/lock-user")
                     .build();
         }
 
@@ -126,7 +133,7 @@ public class UserService {
                     .message("El correo es requerido")
                     .status(400)
                     .error("Bad Request")
-                    .path("/users")
+                    .path("/users/lock-user")
                     .build();
         }
 
@@ -135,6 +142,12 @@ public class UserService {
         user.setActive(false);
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        emailSender.accountDeactivatedEmail(email);
+
+        return MessageResponse.builder()
+                .message("El usuario con correo " + email + " ha sido bloqueado")
+                .build();
     }
 }

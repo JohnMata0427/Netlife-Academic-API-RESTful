@@ -3,7 +3,6 @@ package com.netlife.netlifeacademicapi.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.netlife.netlifeacademicapi.helpers.EmailSender;
@@ -68,6 +67,15 @@ public class AuthService {
                     .build();
         }
 
+        if (user.isVerified() || user.getVerificationCode() == null) {
+            return ErrorResponse.builder()
+                    .message("El usuario ya se encuentra verificado")
+                    .status(400)
+                    .error("Bad Request")
+                    .path("/auth/register")
+                    .build();
+        }
+
         if (!user.getVerificationCode().equals(request.getVerificationCode()))
             return ErrorResponse.builder()
                     .message("Código de verificación incorrecto")
@@ -76,20 +84,14 @@ public class AuthService {
                     .path("/auth/register")
                     .build();
         
-        if (user.isVerified())
-            return ErrorResponse.builder()
-                    .message("El usuario ya se encuentra verificado")
-                    .status(400)
-                    .error("Bad Request")
-                    .path("/auth/register")
-                    .build();
-
         user.setName(request.getName());
         user.setLastname(request.getLastname());
         user.setPassword(userBean.passwordEncoder().encode(request.getPassword()));
         user.setVerificationCode(null);
         user.setVerified(true);
         user.setActive(true);
+
+        emailSender.welcomeEmail(user.getEmail());
 
         return userRepository.save(user);
     }
@@ -104,8 +106,11 @@ public class AuthService {
                     .path("/auth/login")
                     .build();
         }
+        User user;
 
-        if (!userRepository.existsByEmail(email)) {
+        try {
+            user = userRepository.findByEmail(email).get();
+        } catch (Exception e) {
             return ErrorResponse.builder()
                     .message("El correo " + email + " no se encuentra registrado")
                     .status(404)
@@ -113,8 +118,6 @@ public class AuthService {
                     .path("/auth/login")
                     .build();
         }
-
-        UserDetails user = userRepository.findByEmail(email).get();
 
         if (!userBean.passwordEncoder().matches(password, user.getPassword())) {
             return ErrorResponse.builder()
@@ -125,7 +128,7 @@ public class AuthService {
                     .build();
         }
         
-        if (user.isAccountNonLocked()) {
+        if (user.isDeleted()) {
             return ErrorResponse.builder()
                     .message("La cuenta se encuentra bloqueada")
                     .status(400)
@@ -134,9 +137,9 @@ public class AuthService {
                     .build();
         }
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        // authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-        String token = jwtService.getToken(user);
+        String token = jwtService.getToken(user.getId(), user.getRole());
 
         return MessageResponse.builder()
                 .message("Inicio de sesión exitoso")
@@ -290,6 +293,8 @@ public class AuthService {
         user.setPassword(userBean.passwordEncoder().encode(password));
 
         userRepository.save(user);
+
+        emailSender.changePasswordEmail(user.getEmail());
 
         return MessageResponse.builder()
                 .message("Contraseña actualizada exitosamente")

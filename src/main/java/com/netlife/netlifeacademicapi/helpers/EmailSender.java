@@ -60,4 +60,69 @@ public class EmailSender {
             System.out.println("Error al enviar el correo: " + e.getMessage());
         }
     }
+
+    public void welcomeEmail(String toUserMail) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
+
+            helper.setTo(toUserMail);
+            helper.setSubject("Bienvenido a NetLife Academic");
+
+            String htmlMessage = "<h1>Bienvenido a NetLife Academic</h1>"
+                + "<p>Gracias por registrarte en NetLife Academic</p>"
+                + "<p>Esperamos que disfrutes de nuestros servicios</p>";
+
+            helper.setText(htmlMessage, true);
+
+            mailSender.send(message);
+
+            System.out.println("Correo enviado exitosamente");
+        } catch (Exception e) {
+            System.out.println("Error al enviar el correo: " + e.getMessage());
+        }
+    }
+
+    public void changePasswordEmail(String toUserMail) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
+
+            helper.setTo(toUserMail);
+            helper.setSubject("Cambio de contraseña de NetLife Academic");
+
+            String htmlMessage = "<h1>Cambio de contraseña</h1>"
+                + "<p>Tu contraseña ha sido cambiada exitosamente</p>"
+                + "<p>Si no fuiste tú, contacta a soporte</p>";
+
+            helper.setText(htmlMessage, true);
+
+            mailSender.send(message);
+
+            System.out.println("Correo enviado exitosamente");
+        } catch (Exception e) {
+            System.out.println("Error al enviar el correo: " + e.getMessage());
+        }
+    }
+
+    public void accountDeactivatedEmail(String toUserMail) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
+
+            helper.setTo(toUserMail);
+            helper.setSubject("Cuenta bloqueada de NetLife Academic");
+
+            String htmlMessage = "<h1>Cuenta Bloqueada</h1>"
+                + "<p>Tu cuenta ha sido bloqueada, contacta a soporte para más información</p>";
+
+            helper.setText(htmlMessage, true);
+
+            mailSender.send(message);
+
+            System.out.println("Correo enviado exitosamente");
+        } catch (Exception e) {
+            System.out.println("Error al enviar el correo: " + e.getMessage());
+        }
+    }
 }

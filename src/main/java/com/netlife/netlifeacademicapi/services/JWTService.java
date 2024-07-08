@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.netlife.netlifeacademicapi.models.Role;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,15 +27,17 @@ public class JWTService {
     @Value("${jwt.expiration}")
     private int EXPIRATION;
 
-    public String getToken(UserDetails user) {
-        return getToken(new HashMap<>(), user);
+    public String getToken(String id, Role role) {
+        return getToken(new HashMap<>(), id, role);
     }
 
-    private String getToken(Map<String, Object> extraClaims, UserDetails user) {
+    private String getToken(Map<String, Object> extraClaims, String id, Role role) {
+
         return Jwts
                 .builder()
                 .claims(extraClaims)
-                .subject(user.getUsername())
+                .subject(id)
+                .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION * 24))
                 .signWith(getKey(), Jwts.SIG.HS256)
