@@ -185,7 +185,7 @@ public class AuthService {
         user.setToken(token);
         user.setVerificationCode(verificationCode);
 
-        emailSender.recoveryPasswordEmail(email, verificationCode);
+        emailSender.recoveryPasswordEmail(email, verificationCode, token);
 
         userRepository.save(user);
 
@@ -201,7 +201,7 @@ public class AuthService {
                     .message("Todos los campos son requeridos")
                     .status(400)
                     .error("Bad Request")
-                    .path("/auth/verify-code/" + token)
+                    .path("/auth/verify-code?token=" + token)
                     .build();
         }
 
@@ -214,7 +214,7 @@ public class AuthService {
                     .message("El token no es válido")
                     .status(400)
                     .error("Bad Request")
-                    .path("/auth/verify-code/" + token)
+                    .path("/auth/verify-code?token=" + token)
                     .build();
         }
 
@@ -223,7 +223,7 @@ public class AuthService {
                     .message("Código de verificación incorrecto")
                     .status(400)
                     .error("Bad Request")
-                    .path("/auth/verify-code/" + token)
+                    .path("/auth/verify-code?token=" + token)
                     .build();
         }
 
@@ -234,7 +234,6 @@ public class AuthService {
 
         return MessageResponse.builder()
                 .message("Usuario verificado exitosamente")
-                .token(token)
                 .build();
     }
 

@@ -37,14 +37,14 @@ public class AuthController {
         return ResponseEntity.status(response instanceof MessageResponse ? HttpStatus.OK : HttpStatus.BAD_REQUEST).body(response);
     }
 
-    @PostMapping("/verify-code/{token}")
-    public ResponseEntity<?> verifyUserCode(@PathVariable String token, @RequestBody User user) {
+    @PostMapping("/verify-code")
+    public ResponseEntity<?> verifyUserCode(@RequestParam String token, @RequestBody User user) {
         Object response = authService.verifyUserCode(user.getVerificationCode(), token);
         return ResponseEntity.status(response instanceof MessageResponse ? HttpStatus.OK : HttpStatus.BAD_REQUEST).body(response);
     }
 
-    @PostMapping("/new-password/{token}")
-    public ResponseEntity<?> newUserPassword(@PathVariable String token, @RequestBody ChangePassword changePassword) {
+    @PostMapping("/new-password")
+    public ResponseEntity<?> newUserPassword(@RequestParam String token, @RequestBody ChangePassword changePassword) {
         Object response = authService.newUserPassword(changePassword.getPassword(), changePassword.getConfirmPassword(), token);
         return ResponseEntity.status(response instanceof MessageResponse ? HttpStatus.OK : HttpStatus.BAD_REQUEST).body(response);
     }

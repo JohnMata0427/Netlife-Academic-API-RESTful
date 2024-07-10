@@ -1,16 +1,18 @@
 package com.netlife.netlifeacademicapi.helpers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import jakarta.mail.internet.MimeMessage;
-import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class EmailSender {
+
+    @Value("${url.frontend}")
+    private String frontendUrl;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -37,7 +39,7 @@ public class EmailSender {
         }
     }
 
-    public void recoveryPasswordEmail(String toUserMail, String verificationCode) {
+    public void recoveryPasswordEmail(String toUserMail, String verificationCode, String token) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
@@ -49,6 +51,20 @@ public class EmailSender {
                 + "<p>Este es tu código de recuperación de contraseña: <strong>"
                 + verificationCode + "</strong></p>"
                 + "<br>"
+                + "<button style=\"background-color: #4CAF50;\n"
+                + "border: none;\n"
+                + "color: white;\n"
+                + "padding: 15px 32px;\n"
+                + "text-align: center;\n"
+                + "text-decoration: none;\n"
+                + "display: inline-block;\n"
+                + "font-size: 16px;\n"
+                + "margin: 4px 2px;\n"
+                + "cursor: pointer;\n"
+                + "border-radius: 10px;\n"
+                + "box-shadow: 0 9px #999999;\">\n"
+                + "<a href=\"" + frontendUrl + "/auth/verify-code?token=" + token + "\">Recuperar contraseña</a>\n"
+                + "</button>"
                 + "<p>Si no solicitaste la recuperación de contraseña, contacta a soporte</p>";
 
             helper.setText(htmlMessage, true);
