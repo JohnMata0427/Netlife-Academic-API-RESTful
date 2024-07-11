@@ -2,6 +2,7 @@ package com.netlife.netlifeacademicapi.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -46,15 +48,22 @@ public class User implements UserDetails {
 
     private String area;
 
+    private String level;
+
     private String position;
 
     private Date birthdate;
 
-    private String image;
+    private String imageUrl;
+
+    private String state;
 
     private boolean active;
 
     private boolean deleted;
+
+    @ManyToMany(mappedBy = "users")
+    private Set<Course> courses;
 
     private Timestamp createdAt;
 

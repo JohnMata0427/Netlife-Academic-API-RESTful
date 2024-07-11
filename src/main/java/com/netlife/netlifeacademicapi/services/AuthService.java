@@ -299,4 +299,5 @@ public class AuthService {
                 .message("Contraseña actualizada exitosamente")
                 .build();
     }
+
 }

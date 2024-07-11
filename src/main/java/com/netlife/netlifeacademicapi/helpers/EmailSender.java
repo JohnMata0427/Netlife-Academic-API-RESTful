@@ -141,4 +141,26 @@ public class EmailSender {
             System.out.println("Error al enviar el correo: " + e.getMessage());
         }
     }
+
+    public void profileUpdatedEmail(String toUserMail) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
+
+            helper.setTo(toUserMail);
+            helper.setSubject("Actualización de perfil de NetLife Academic");
+
+            String htmlMessage = "<h1>Perfil Actualizado</h1>"
+                + "<p>Tu perfil ha sido actualizado exitosamente</p>"
+                + "<p>Si no fuiste tú, contacta a soporte</p>";
+
+            helper.setText(htmlMessage, true);
+
+            mailSender.send(message);
+
+            System.out.println("Correo enviado exitosamente");
+        } catch (Exception e) {
+            System.out.println("Error al enviar el correo: " + e.getMessage());
+        }
+    }
 }

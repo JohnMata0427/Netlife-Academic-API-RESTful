@@ -1,11 +1,16 @@
 package com.netlife.netlifeacademicapi.controllers;
 
 import com.netlife.netlifeacademicapi.models.ErrorResponse;
+import com.netlife.netlifeacademicapi.models.MessageResponse;
 import com.netlife.netlifeacademicapi.models.User;
+import com.netlife.netlifeacademicapi.services.CloudinaryService;
 import com.netlife.netlifeacademicapi.services.UserService;
+
+import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +21,9 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @PostMapping
     public Object createUser(@RequestBody User user) {
@@ -37,6 +45,12 @@ public class UserController {
     public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user) {
         Object updatedUser = userService.updateUser(id, user);
         return updatedUser instanceof User ? ResponseEntity.ok((User) updatedUser) : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping(value = "{id}/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadImage(@RequestPart("image") MultipartFile file, @PathVariable String id) {
+        Object response = cloudinaryService.uploadFile(file, id);
+        return ResponseEntity.status(response instanceof MessageResponse ? 200 : 404).body(response);
     }
 
     @DeleteMapping("/{id}")

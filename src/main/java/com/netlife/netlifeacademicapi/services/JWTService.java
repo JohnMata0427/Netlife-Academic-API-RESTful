@@ -32,7 +32,6 @@ public class JWTService {
     }
 
     private String getToken(Map<String, Object> extraClaims, String id, Role role) {
-
         return Jwts
                 .builder()
                 .claims(extraClaims)

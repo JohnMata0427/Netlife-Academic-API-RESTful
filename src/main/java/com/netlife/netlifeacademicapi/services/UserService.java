@@ -28,7 +28,7 @@ public class UserService {
     private UserBean userBean;
 
     @Autowired
-    EmailSender emailSender;
+    private EmailSender emailSender;
 
     @Transactional
     public List<User> getAllUsers() {
@@ -93,16 +93,19 @@ public class UserService {
         }
 
         User user = userRepository.findById(id).get();
+        
 
         if (request.getName() != null) user.setName(request.getName());
         if (request.getLastname() != null) user.setLastname(request.getLastname());
         if (request.getPassword() != null) user.setPassword(userBean.passwordEncoder().encode(request.getPassword()));
         if (request.getRole() != null) user.setRole(request.getRole());
         if (request.getCompany() != null) user.setCompany(request.getCompany());
+        if (request.getLevel() != null) user.setLevel(request.getLevel());
         if (request.getArea() != null) user.setArea(request.getArea());
         if (request.getPosition() != null) user.setPosition(request.getPosition());
         if (request.getBirthdate() != null) user.setBirthdate(request.getBirthdate());
-        if (request.getImage() != null) user.setImage(request.getImage());
+        if (request.getState() != null) user.setState(request.getState());
+        if (request.getImageUrl() != null) user.setImageUrl(request.getImageUrl());
         if (request.isDeleted()) user.setDeleted(!request.isDeleted());
         
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
