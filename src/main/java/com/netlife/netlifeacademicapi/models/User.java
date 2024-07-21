@@ -11,7 +11,6 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
@@ -44,6 +43,8 @@ public class User implements UserDetails {
 
     private boolean recoveryPassword;
 
+    private String identification;
+
     private String company;
 
     private String area;
@@ -62,8 +63,20 @@ public class User implements UserDetails {
 
     private boolean deleted;
 
-    @ManyToMany(mappedBy = "users")
-    private Set<Course> courses;
+    @ManyToMany(
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
+    )
+    @JoinTable(
+        name = "users_courses",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private List<Course> courses;
+
+    private List<String> certificates;
+
+    private int points;
 
     private Timestamp createdAt;
 

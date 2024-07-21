@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.util.Set;
-
+import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
@@ -23,21 +22,10 @@ public class Course {
 
     private String imageUrl;
 
-    @ManyToMany
-    @JoinTable(
-            name = "courses_teachers",
-            joinColumns = @JoinColumn(name = "course_id"),
-            inverseJoinColumns = @JoinColumn(name = "teacher_id")
-    )
-    private Set<String> teacher_id;
+    private String teacher_id;
 
-    @ManyToMany
-    @JoinTable(
-        name = "courses_students",
-        joinColumns = @JoinColumn(name = "course_id"),
-        inverseJoinColumns = @JoinColumn(name = "student_id")
-    )
-    private Set<User> students;
+    @ManyToMany(mappedBy = "courses")
+    private List<User> students;
 
     private Timestamp createdAt;
 

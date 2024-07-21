@@ -91,9 +91,16 @@ public class AuthService {
         user.setVerified(true);
         user.setActive(true);
 
+        String token = jwtService.getToken(user.getId(), user.getRole());
+
         emailSender.welcomeEmail(user.getEmail());
 
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        return MessageResponse.builder()
+                .message("Usuario registrado exitosamente")
+                .token(token)
+                .build();
     }
 
     @Transactional
@@ -218,7 +225,16 @@ public class AuthService {
                     .build();
         }
 
-        if (!user.getVerificationCode().equals(verificationCode)) {
+        if (user.getVerificationCode() == null && user.isRecoveryPassword()) {
+            return ErrorResponse.builder()
+                    .message("El usuario ya ha ingresado el código de verificación")
+                    .status(400)
+                    .error("Bad Request")
+                    .path("/auth/verify-code?token=" + token)
+                    .build();
+        }
+
+        if (!user.getVerificationCode().equals(verificationCode)){
             return ErrorResponse.builder()
                     .message("Código de verificación incorrecto")
                     .status(400)

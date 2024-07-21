@@ -41,6 +41,12 @@ public class UserController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/ranking")
+    public ResponseEntity<?> getRankedUsers() {
+        Object response = userService.getRankedUsers();
+        return ResponseEntity.status(response instanceof List ? 200 : 404).body(response);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user) {
         Object updatedUser = userService.updateUser(id, user);

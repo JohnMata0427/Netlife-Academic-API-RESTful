@@ -10,10 +10,15 @@ import com.netlife.netlifeacademicapi.repositories.IUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,6 +43,13 @@ public class UserService {
     @Transactional
     public Optional<User> getUserById(String id) {
         return userRepository.findById(id);
+    }
+    
+    @Transactional
+    public Object getRankedUsers() {
+        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "points"));
+
+        return userRepository.findAll(pageable).getContent();
     }
 
     @Transactional
@@ -64,6 +76,7 @@ public class UserService {
 
         User user = User.builder()
                 .id(UUID.randomUUID().toString())
+                .imageUrl("https://res.cloudinary.com/ddcs9xxid/image/upload/v1720924124/profile_icbsmd.png")
                 .email(email)
                 .role(role)
                 .password(userBean.passwordEncoder().encode(UUID.randomUUID().toString().substring(0, 8)))
@@ -93,7 +106,6 @@ public class UserService {
         }
 
         User user = userRepository.findById(id).get();
-        
 
         if (request.getName() != null) user.setName(request.getName());
         if (request.getLastname() != null) user.setLastname(request.getLastname());
@@ -107,6 +119,7 @@ public class UserService {
         if (request.getState() != null) user.setState(request.getState());
         if (request.getImageUrl() != null) user.setImageUrl(request.getImageUrl());
         if (request.isDeleted()) user.setDeleted(!request.isDeleted());
+        if (request.getPoints() > 0) user.setPoints(request.getPoints()); 
         
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
