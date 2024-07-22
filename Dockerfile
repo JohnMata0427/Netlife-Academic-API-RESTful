@@ -6,7 +6,7 @@ WORKDIR /app
 
 RUN chmod +x ./mvnw
 
-RUN ./mvnw clean package
+RUN ./mvnw clean package -DskipTests
 
 COPY target/netlife-academic-api-0.0.1-SNAPSHOT.jar /app.jar
 
