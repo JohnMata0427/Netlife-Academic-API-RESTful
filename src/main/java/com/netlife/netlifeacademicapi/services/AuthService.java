@@ -192,7 +192,7 @@ public class AuthService {
         user.setToken(token);
         user.setVerificationCode(verificationCode);
 
-        emailSender.recoveryPasswordEmail(email, verificationCode, token);
+        emailSender.recoveryPasswordEmail(email, user.getName(), verificationCode, token);
 
         userRepository.save(user);
 

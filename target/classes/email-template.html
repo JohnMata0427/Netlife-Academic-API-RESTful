@@ -1,0 +1,98 @@
+<body>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			border: solid 1px #000;
+			border-radius: 16px 16px 0 0;
+		}
+
+		main {
+			padding: 40px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		header,
+		img {
+			width: 100%;
+		}
+		h1 {
+			font-size: 22px;
+			font-weight: 700;
+			text-align: center;
+		}
+		.code {
+			color: #fd6a00;
+			font-weight: 700;
+		}
+		a {
+			display: inline-block;
+			padding: 10px 20px;
+			margin: 12px 0;
+			background-color: #fd6a00;
+			color: #fff;
+			text-decoration: none;
+			border-radius: 5px;
+		}
+		.alien {
+			height: 50%;
+			width: auto;
+		}
+
+		footer > div {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.div-copy {
+			font-size: 14px;
+			background-color: black;
+			color: white;
+			text-align: center;
+			padding: 1px 0;
+		}
+
+		.saludo {
+			font-size: 16px;
+		}
+	</style>
+	<header>
+		<img
+			src="https://res.cloudinary.com/ddcs9xxid/image/upload/v1721612928/header-email_l2phin.png"
+			alt="Header Email"
+		/>
+	</header>
+	<main>
+		<h1>{{title}}</h1>
+		<div>
+			<p>Hola <strong>{{name}}</strong>,</p>
+			<p>{{first_message}}</p>
+			<p>{{second_message}}</p>
+			<span class="code">{{verificationCode}}</span>
+			<p>{{third_message}}</p>
+			<a href="{{url}}">{{button_text}}</a>
+			<p>{{fourth_message}}</p>
+		</div>
+	</main>
+	<footer>
+		<div>
+			<img
+				class="alien"
+				src="https://res.cloudinary.com/ddcs9xxid/image/upload/v1721612927/icono_gg8uhe.png"
+				alt=""
+			/>
+			<p class="saludo">
+				Un saludo, <br />
+				El Equipo de <strong><em>Netlife Academic</em></strong
+				>.
+			</p>
+		</div>
+		<div class="div-copy">
+			<p>&copy; 2024 NetLife Academic.</p>
+		</div>
+	</footer>
+</body>
