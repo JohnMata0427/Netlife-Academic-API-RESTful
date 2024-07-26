@@ -1,5 +1,7 @@
 package com.netlife.netlifeacademicapi.services;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.netlife.netlifeacademicapi.helpers.EmailSender;
 import com.netlife.netlifeacademicapi.helpers.UserBean;
 import com.netlife.netlifeacademicapi.models.ErrorResponse;
-import com.netlife.netlifeacademicapi.models.MessageResponse;
 import com.netlife.netlifeacademicapi.models.User;
 import com.netlife.netlifeacademicapi.repositories.IUserRepository;
 
@@ -93,14 +94,11 @@ public class AuthService {
 
         String token = jwtService.getToken(user.getId(), user.getRole());
 
-        emailSender.welcomeEmail(user.getEmail());
+        emailSender.welcomeEmail(user.getEmail(), user.getName());
 
         userRepository.save(user);
 
-        return MessageResponse.builder()
-                .message("Usuario registrado exitosamente")
-                .token(token)
-                .build();
+        return Map.of("message", "Usuario registrado exitosamente", "token", token, "id", user.getId());
     }
 
     @Transactional
@@ -148,10 +146,7 @@ public class AuthService {
 
         String token = jwtService.getToken(user.getId(), user.getRole());
 
-        return MessageResponse.builder()
-                .message("Inicio de sesión exitoso")
-                .token(token)
-                .build();
+        return Map.of("message", "Inicio de sesión exitoso", "token", token, "id", user.getId());
     }
 
     @Transactional
@@ -196,10 +191,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return MessageResponse.builder()
-                .message("Código de verificación enviado al correo " + email)
-                .token(token)
-                .build();
+        return Map.of("message", "Correo enviadzo exitosamente");
     }
 
     public Object verifyUserCode(String verificationCode, String token) {
@@ -236,7 +228,7 @@ public class AuthService {
 
         if (!user.getVerificationCode().equals(verificationCode)){
             return ErrorResponse.builder()
-                    .message("Código de verificación incorrecto")
+                    .message("El código de verificación es incorrecto")
                     .status(400)
                     .error("Bad Request")
                     .path("/auth/verify-code?token=" + token)
@@ -248,9 +240,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return MessageResponse.builder()
-                .message("Usuario verificado exitosamente")
-                .build();
+        return Map.of("message", "El código de verificación es correcto");
     }
 
     public Object newUserPassword(String password, String confirmPassword, String token) {
@@ -309,11 +299,9 @@ public class AuthService {
 
         userRepository.save(user);
 
-        emailSender.changePasswordEmail(user.getEmail());
+        emailSender.changePasswordEmail(user.getEmail(), user.getName());
 
-        return MessageResponse.builder()
-                .message("Contraseña actualizada exitosamente")
-                .build();
+        return Map.of("message", "Contraseña cambiada exitosamente");
     }
 
 }

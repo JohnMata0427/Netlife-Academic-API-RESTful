@@ -1,7 +1,6 @@
 package com.netlife.netlifeacademicapi.controllers;
 
 import com.netlife.netlifeacademicapi.models.ErrorResponse;
-import com.netlife.netlifeacademicapi.models.MessageResponse;
 import com.netlife.netlifeacademicapi.models.User;
 import com.netlife.netlifeacademicapi.services.CloudinaryService;
 import com.netlife.netlifeacademicapi.services.UserService;
@@ -56,7 +55,7 @@ public class UserController {
     @PostMapping(value = "{id}/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImage(@RequestPart("image") MultipartFile file, @PathVariable String id) {
         Object response = cloudinaryService.uploadFile(file, id);
-        return ResponseEntity.status(response instanceof MessageResponse ? 200 : 404).body(response);
+        return ResponseEntity.status(response instanceof ErrorResponse ? 404 : 200).body(response);
     }
 
     @DeleteMapping("/{id}")

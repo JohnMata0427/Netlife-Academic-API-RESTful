@@ -3,7 +3,6 @@ package com.netlife.netlifeacademicapi.services;
 import com.netlife.netlifeacademicapi.helpers.EmailSender;
 import com.netlife.netlifeacademicapi.helpers.UserBean;
 import com.netlife.netlifeacademicapi.models.ErrorResponse;
-import com.netlife.netlifeacademicapi.models.MessageResponse;
 import com.netlife.netlifeacademicapi.models.Role;
 import com.netlife.netlifeacademicapi.models.User;
 import com.netlife.netlifeacademicapi.repositories.IUserRepository;
@@ -123,6 +122,8 @@ public class UserService {
         
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
+        emailSender.profileUpdatedEmail(user.getEmail(), user.getName());
+
         return userRepository.save(user);
     }
 
@@ -160,10 +161,8 @@ public class UserService {
 
         userRepository.save(user);
 
-        emailSender.accountDeactivatedEmail(email);
+        emailSender.accountDeactivatedEmail(email, user.getName());
 
-        return MessageResponse.builder()
-                .message("El usuario con correo " + email + " ha sido bloqueado")
-                .build();
+        return Map.of("message", "El usuario " + user.getEmail() + " ha sido eliminado correctamente");
     }
 }

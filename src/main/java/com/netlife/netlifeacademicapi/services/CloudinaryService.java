@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.netlife.netlifeacademicapi.models.ErrorResponse;
-import com.netlife.netlifeacademicapi.models.MessageResponse;
 import com.netlife.netlifeacademicapi.models.User;
 import com.netlife.netlifeacademicapi.repositories.IUserRepository;
 
@@ -59,9 +58,7 @@ public class CloudinaryService {
 
         userRepository.save(user);
 
-        return MessageResponse.builder()
-                .message("Imagen subida correctamente")
-                .build();
+        return Map.of("message", "Imagen subida correctamente");
     }
     
 }

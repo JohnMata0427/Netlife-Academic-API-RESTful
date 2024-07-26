@@ -22,6 +22,12 @@ public class EmailSender {
     @Autowired
     private JavaMailSender mailSender;
 
+    private final Path templatePath;
+
+    private EmailSender() throws Exception {
+        this.templatePath = Paths.get(getClass().getClassLoader().getResource("email-template.html").toURI());
+    }
+
     public void verificationCodeEmail(String toUserMail, String verificationCode) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -30,7 +36,6 @@ public class EmailSender {
             helper.setTo(toUserMail);
             helper.setSubject("Código de verificación de Acceso a Netlife Academic");
 
-            Path templatePath = Paths.get(getClass().getClassLoader().getResource("email-template.html").toURI());
             String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
 
             String htmlMessage = htmlTemplate
@@ -48,7 +53,7 @@ public class EmailSender {
 
             mailSender.send(message);
 
-            System.out.println("Correo enviado exitosamente");
+            System.out.println("Correo de verificación enviado exitosamente a " + toUserMail);
         } catch (Exception e) {
             System.out.println("Error al enviar el correo: " + e.getMessage());
         }
@@ -62,7 +67,6 @@ public class EmailSender {
             helper.setTo(toUserMail);
             helper.setSubject("Recuperación de contraseña de Netlife Academic");
 
-            Path templatePath = Paths.get(getClass().getClassLoader().getResource("email-template.html").toURI());
             String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
 
             String htmlMessage = htmlTemplate
@@ -80,13 +84,13 @@ public class EmailSender {
 
             mailSender.send(message);
 
-            System.out.println("Correo enviado exitosamente");
+            System.out.println("Correo de recuperación de contraseña enviado exitosamente a " + toUserMail);
         } catch (Exception e) {
             System.out.println("Error al enviar el correo: " + e.getMessage());
         }
     }
 
-    public void welcomeEmail(String toUserMail) {
+    public void welcomeEmail(String toUserMail, String username) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
@@ -94,21 +98,31 @@ public class EmailSender {
             helper.setTo(toUserMail);
             helper.setSubject("Bienvenido a Netlife Academic");
 
-            String htmlMessage = "<h1>Bienvenido a Netlife Academic</h1>"
-                + "<p>Gracias por registrarte en Netlife Academic</p>"
-                + "<p>Esperamos que disfrutes de nuestros servicios</p>";
+            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
+
+            String htmlMessage = htmlTemplate
+            .replace("{{title}}", "Bienvenido a Netlife Academic")
+            .replace("{{verificationCode}}", "")
+            .replace("{{name}}", username)
+            .replace("{{first_message}}", "Tu cuenta ha sido creada exitosamente.")
+            .replace("{{second_message}}", "Nos emociona tenerte en nuestra comunidad de aprendizaje.")
+            .replace("{{third_message}}", "Ante cualquier duda, no dudes en contactar al soporte técnico.")
+            .replace("{{fourth_message}}", "Para comenzar a disfrutar de nuestros servicios, inicia sesión:")
+            .replace("{{button_text}}", "Iniciar sesión")
+            .replace("{{url}}", frontendUrl + "/auth/login");
+
 
             helper.setText(htmlMessage, true);
 
             mailSender.send(message);
 
-            System.out.println("Correo enviado exitosamente");
+            System.out.println("Correo de bienvenida enviado exitosamente a " + toUserMail);
         } catch (Exception e) {
             System.out.println("Error al enviar el correo: " + e.getMessage());
         }
     }
 
-    public void changePasswordEmail(String toUserMail) {
+    public void changePasswordEmail(String toUserMail, String username) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
@@ -116,21 +130,30 @@ public class EmailSender {
             helper.setTo(toUserMail);
             helper.setSubject("Cambio de contraseña de Netlife Academic");
 
-            String htmlMessage = "<h1>Cambio de contraseña</h1>"
-                + "<p>Tu contraseña ha sido cambiada exitosamente</p>"
-                + "<p>Si no fuiste tú, contacta a soporte</p>";
+            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
+
+            String htmlMessage = htmlTemplate
+            .replace("{{title}}", "Cambio de contraseña de Netlife Academic")
+            .replace("{{verificationCode}}", "")
+            .replace("{{name}}", username)
+            .replace("{{first_message}}", "Tu contraseña ha sido cambiada exitosamente.")
+            .replace("{{second_message}}", "Tu información personal es segura con nosotros.")
+            .replace("{{third_message}}", "Si no realizaste estos cambios, contacta a soporte técnico.")
+            .replace("{{fourth_message}}", "Para comenzar a disfrutar de nuestros servicios, inicia sesión:")
+            .replace("{{button_text}}", "Iniciar sesión")
+            .replace("{{url}}", frontendUrl + "/auth/login");
 
             helper.setText(htmlMessage, true);
 
             mailSender.send(message);
 
-            System.out.println("Correo enviado exitosamente");
+            System.out.println("Correo de cambio de contraseña enviado exitosamente a " + toUserMail);
         } catch (Exception e) {
             System.out.println("Error al enviar el correo: " + e.getMessage());
         }
     }
 
-    public void accountDeactivatedEmail(String toUserMail) {
+    public void accountDeactivatedEmail(String toUserMail, String username) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
@@ -138,20 +161,30 @@ public class EmailSender {
             helper.setTo(toUserMail);
             helper.setSubject("Cuenta bloqueada de Netlife Academic");
 
-            String htmlMessage = "<h1>Cuenta Bloqueada</h1>"
-                + "<p>Tu cuenta ha sido bloqueada, contacta a soporte para más información</p>";
+            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
+
+            String htmlMessage = htmlTemplate
+            .replace("{{title}}", "Cuenta bloqueada de Netlife Academic")
+            .replace("{{verificationCode}}", "")
+            .replace("{{name}}", username)
+            .replace("{{first_message}}", "Lamentamos informarte que tu cuenta ha sido bloqueada.")
+            .replace("{{second_message}}", "Ha sido un placer tenerte en nuestra comunidad de aprendizaje.")
+            .replace("{{third_message}}", "Si crees que esto es un error, contacta a soporte técnico.")
+            .replace("{{fourth_message}}", "Haz clic en el siguiente enlace para contactar a soporte:")
+            .replace("{{button_text}}", "Contactar soporte")
+            .replace("{{url}}", frontendUrl + "/contact");
 
             helper.setText(htmlMessage, true);
 
             mailSender.send(message);
 
-            System.out.println("Correo enviado exitosamente");
+            System.out.println("Correo de cuenta bloqueada enviado exitosamente a " + toUserMail);
         } catch (Exception e) {
             System.out.println("Error al enviar el correo: " + e.getMessage());
         }
     }
 
-    public void profileUpdatedEmail(String toUserMail) {
+    public void profileUpdatedEmail(String toUserMail, String username) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
@@ -159,15 +192,24 @@ public class EmailSender {
             helper.setTo(toUserMail);
             helper.setSubject("Actualización de perfil de Netlife Academic");
 
-            String htmlMessage = "<h1>Perfil Actualizado</h1>"
-                + "<p>Tu perfil ha sido actualizado exitosamente</p>"
-                + "<p>Si no fuiste tú, contacta a soporte</p>";
+            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
+
+            String htmlMessage = htmlTemplate
+            .replace("{{title}}", "Actualización de perfil de Netlife Academic")
+            .replace("{{verificationCode}}", "")
+            .replace("{{name}}", username)
+            .replace("{{first_message}}", "Tu perfil ha sido actualizado exitosamente.")
+            .replace("{{second_message}}", "Tu información personal es segura con nosotros.")
+            .replace("{{third_message}}", "Si no realizaste estos cambios, contacta a soporte técnico.")
+            .replace("{{fourth_message}}", "Puedes ver tus cambios en tu perfil:")
+            .replace("{{button_text}}", "Ver perfil")
+            .replace("{{url}}", frontendUrl + "/mi-perfil");
 
             helper.setText(htmlMessage, true);
 
             mailSender.send(message);
 
-            System.out.println("Correo enviado exitosamente");
+            System.out.println("Correo de actualización de perfil enviado exitosamente a " + toUserMail);
         } catch (Exception e) {
             System.out.println("Error al enviar el correo: " + e.getMessage());
         }
