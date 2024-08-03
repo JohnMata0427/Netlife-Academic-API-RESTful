@@ -13,27 +13,27 @@ import com.netlife.netlifeacademicapi.models.ErrorResponse;
 import com.netlife.netlifeacademicapi.models.User;
 import com.netlife.netlifeacademicapi.repositories.IUserRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
     @Autowired
-    private IUserRepository userRepository;
+    private final IUserRepository userRepository;
 
     @Autowired
-    private UserBean userBean;
+    private final UserBean userBean;
 
     @Autowired
-    private JWTService jwtService;
+    private final JWTService jwtService;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    private EmailSender emailSender;
+    private final EmailSender emailSender;
 
     @Transactional
     public Object registerUser(User request) {
@@ -88,6 +88,7 @@ public class AuthService {
         user.setName(request.getName());
         user.setLastname(request.getLastname());
         user.setPassword(userBean.passwordEncoder().encode(request.getPassword()));
+        user.setIdentification(request.getIdentification());
         user.setVerificationCode(null);
         user.setVerified(true);
         user.setActive(true);

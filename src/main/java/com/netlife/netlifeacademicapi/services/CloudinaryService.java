@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
+import com.netlife.netlifeacademicapi.models.Announcement;
 import com.netlife.netlifeacademicapi.models.ErrorResponse;
 import com.netlife.netlifeacademicapi.models.User;
+import com.netlife.netlifeacademicapi.repositories.IAnnouncementRepository;
 import com.netlife.netlifeacademicapi.repositories.IUserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,10 @@ public class CloudinaryService {
     @Autowired
     private IUserRepository userRepository;
 
-    public Object uploadFile(MultipartFile multipartFile, String id) {
+    @Autowired
+    private IAnnouncementRepository announcementRepository;
+
+    public Object uploadFileUser(MultipartFile multipartFile, String id) {
 
         User user;
         String imageUrl;
@@ -60,5 +65,42 @@ public class CloudinaryService {
 
         return Map.of("message", "Imagen subida correctamente");
     }
-    
+
+    public Object uploadFileAnnouncement(MultipartFile multipartFile, String id) {
+
+        Announcement announcement;
+        String imageUrl;
+
+        try {
+            announcement = announcementRepository.findById(id).get();
+        } catch (Exception e) {
+            return ErrorResponse.builder()
+                    .message("Anuncio no encontrado")
+                    .status(404)
+                    .error("Not Found")
+                    .path("/announcements/" + id + "/upload-image")
+                    .build();
+        }
+
+        try {
+            imageUrl = cloudinary
+                        .uploader()
+                        .upload(multipartFile.getBytes(), Map.of("public_id", "announcement-" + announcement.getId()))
+                        .get("url")
+                        .toString();
+        } catch (Exception e) {
+            return ErrorResponse.builder()
+                    .message("Error al subir la imagen")
+                    .status(500)
+                    .error("Internal Server Error")
+                    .path("/announcements/" + id + "/upload-image")
+                    .build();
+        }
+
+        announcement.setImageUrl(imageUrl);
+
+        announcementRepository.save(announcement);
+
+        return Map.of("message", "Imagen subida correctamente");
+    }
 }

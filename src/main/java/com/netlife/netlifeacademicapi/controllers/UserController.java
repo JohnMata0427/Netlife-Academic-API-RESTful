@@ -54,7 +54,7 @@ public class UserController {
 
     @PostMapping(value = "{id}/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImage(@RequestPart("image") MultipartFile file, @PathVariable String id) {
-        Object response = cloudinaryService.uploadFile(file, id);
+        Object response = cloudinaryService.uploadFileUser(file, id);
         return ResponseEntity.status(response instanceof ErrorResponse ? 404 : 200).body(response);
     }
 
@@ -74,6 +74,12 @@ public class UserController {
     @PutMapping("/lock-user")
     public ResponseEntity<?> deleteUser(@RequestBody User user) {
         Object response = userService.deleteUser(user.getEmail());
+        return ResponseEntity.status(response instanceof User ? 200 : 404).body(response);
+    }
+
+    @GetMapping("/all-emails")
+    public ResponseEntity<?> getAllEmails() {
+        Object response = userService.findAllEmails();
         return ResponseEntity.status(response instanceof User ? 200 : 404).body(response);
     }
 }

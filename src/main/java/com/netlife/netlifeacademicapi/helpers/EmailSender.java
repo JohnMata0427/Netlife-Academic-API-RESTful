@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,7 @@ public class EmailSender {
     private JavaMailSender mailSender;
 
     private final Path templatePath;
-
+    
     private EmailSender() throws Exception {
         this.templatePath = Paths.get(getClass().getClassLoader().getResource("email-template.html").toURI());
     }
@@ -210,6 +211,31 @@ public class EmailSender {
             mailSender.send(message);
 
             System.out.println("Correo de actualización de perfil enviado exitosamente a " + toUserMail);
+        } catch (Exception e) {
+            System.out.println("Error al enviar el correo: " + e.getMessage());
+        }
+    }
+
+    public void announcementEmail(String[] toUserMails, String subject, String content, String type, String role, boolean guest, String state) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
+
+            helper.setTo(toUserMails);
+            helper.setSubject(subject);
+
+            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
+
+            String htmlMessage = htmlTemplate
+            .replace("{{title}}", subject)
+            .replace("{{role}}" , role)
+            .replace("{{message}}", content);
+
+            helper.setText(htmlMessage, true);
+
+            mailSender.send(message);
+
+            System.out.println("Correo de anuncio enviado exitosamente a " + toUserMails.length + " usuarios");
         } catch (Exception e) {
             System.out.println("Error al enviar el correo: " + e.getMessage());
         }

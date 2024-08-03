@@ -6,13 +6,13 @@ import com.netlife.netlifeacademicapi.models.ErrorResponse;
 import com.netlife.netlifeacademicapi.models.Role;
 import com.netlife.netlifeacademicapi.models.User;
 import com.netlife.netlifeacademicapi.repositories.IUserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -49,6 +49,11 @@ public class UserService {
         Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "points"));
 
         return userRepository.findAll(pageable).getContent();
+    }
+
+    @Transactional
+    public Object findAllEmails() {
+        return userRepository.findAllEmails();
     }
 
     @Transactional
