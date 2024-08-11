@@ -38,14 +38,6 @@ public class AuthService {
     @Transactional
     public Object registerUser(User request) {
 
-        if (request.getName() == null || request.getLastname() == null || request.getPassword() == null || request.getEmail() == null)
-            return ErrorResponse.builder()
-                    .message("Todos los campos son requeridos")
-                    .status(400)
-                    .error("Bad Request")
-                    .path("/auth/register")
-                    .build();
-
         User user;
 
         try {
@@ -68,7 +60,7 @@ public class AuthService {
                     .build();
         }
 
-        if (user.isVerified() || user.getVerificationCode() == null) {
+        if (user.isVerified()) {
             return ErrorResponse.builder()
                     .message("El usuario ya se encuentra verificado")
                     .status(400)
@@ -85,33 +77,24 @@ public class AuthService {
                     .path("/auth/register")
                     .build();
         
+        user.setIdentification(request.getIdentification());
         user.setName(request.getName());
         user.setLastname(request.getLastname());
         user.setPassword(userBean.passwordEncoder().encode(request.getPassword()));
-        user.setIdentification(request.getIdentification());
         user.setVerificationCode(null);
         user.setVerified(true);
         user.setActive(true);
 
-        String token = jwtService.getToken(user.getId(), user.getRole());
-
+        userRepository.save(user);
+        
         emailSender.welcomeEmail(user.getEmail(), user.getName());
 
-        userRepository.save(user);
-
-        return Map.of("message", "Usuario registrado exitosamente", "token", token, "id", user.getId());
+        return Map.of("message", "Usuario registrado exitosamente", "token", jwtService.getToken(user.getId(), user.getRole()), "id", user.getId());
     }
 
     @Transactional
     public Object loginUser(String email, String password) {
-        if (password == null || email == null) {
-            return ErrorResponse.builder()
-                    .message("Todos los campos son requeridos")
-                    .status(400)
-                    .error("Bad Request")
-                    .path("/auth/login")
-                    .build();
-        }
+
         User user;
 
         try {
@@ -127,11 +110,11 @@ public class AuthService {
 
         if (!userBean.passwordEncoder().matches(password, user.getPassword())) {
             return ErrorResponse.builder()
-                    .message("Contraseña incorrecta")
-                    .status(400)
-                    .error("Bad Request")
-                    .path("/auth/login")
-                    .build();
+            .message("Contraseña incorrecta")
+            .status(400)
+            .error("Bad Request")
+            .path("/auth/login")
+            .build();
         }
         
         if (user.isDeleted()) {
@@ -142,27 +125,20 @@ public class AuthService {
                     .path("/auth/register")
                     .build();
         }
-
+        
         // authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-        String token = jwtService.getToken(user.getId(), user.getRole());
-
-        return Map.of("message", "Inicio de sesión exitoso", "token", token, "id", user.getId());
+        return Map.of("message", "Inicio de sesión exitoso", "token", jwtService.getToken(user.getId(), user.getRole()), "id", user.getId());
     }
 
     @Transactional
     public Object recoveryPassword(String email) {
 
-        if (email == null) {
-            return ErrorResponse.builder()
-                    .message("El correo es requerido")
-                    .status(400)
-                    .error("Bad Request")
-                    .path("/auth/recovery-password")
-                    .build();
-        }
+        User user;
 
-        if (!userRepository.existsByEmail(email)) {
+        try {
+            user = userRepository.findByEmail(email).get();
+        } catch (Exception e) {
             return ErrorResponse.builder()
                     .message("El correo " + email + " no se encuentra registrado")
                     .status(404)
@@ -170,8 +146,6 @@ public class AuthService {
                     .path("/auth/recovery-password")
                     .build();
         }
-
-        User user = userRepository.findByEmail(email).get();
 
         if (user.isDeleted()) {
             return ErrorResponse.builder()
@@ -188,22 +162,14 @@ public class AuthService {
         user.setToken(token);
         user.setVerificationCode(verificationCode);
 
+        userRepository.save(user);
+        
         emailSender.recoveryPasswordEmail(email, user.getName(), verificationCode, token);
 
-        userRepository.save(user);
-
-        return Map.of("message", "Correo enviadzo exitosamente");
+        return Map.of("message", "Correo enviado exitosamente");
     }
 
     public Object verifyUserCode(String verificationCode, String token) {
-        if (verificationCode == null) {
-            return ErrorResponse.builder()
-                    .message("Todos los campos son requeridos")
-                    .status(400)
-                    .error("Bad Request")
-                    .path("/auth/verify-code?token=" + token)
-                    .build();
-        }
 
         User user;
 
@@ -218,9 +184,9 @@ public class AuthService {
                     .build();
         }
 
-        if (user.getVerificationCode() == null && user.isRecoveryPassword()) {
+        if (!user.isRecoveryPassword()) {
             return ErrorResponse.builder()
-                    .message("El usuario ya ha ingresado el código de verificación")
+                    .message("El usuario no cuenta con un código de verificación")
                     .status(400)
                     .error("Bad Request")
                     .path("/auth/verify-code?token=" + token)
@@ -245,14 +211,6 @@ public class AuthService {
     }
 
     public Object newUserPassword(String password, String confirmPassword, String token) {
-        if (password == null || confirmPassword == null) {
-            return ErrorResponse.builder()
-                    .message("Todos los campos son requeridos")
-                    .status(400)
-                    .error("Bad Request")
-                    .path("/auth/new-password/" + token)
-                    .build();
-        }
 
         User user;
 
@@ -269,25 +227,7 @@ public class AuthService {
 
         if (!user.isRecoveryPassword()) {
             return ErrorResponse.builder()
-                    .message("El usuario no ha ingresado el código de verificación")
-                    .status(400)
-                    .error("Bad Request")
-                    .path("/auth/new-password/" + token)
-                    .build();
-        }
-
-        if (!password.equals(confirmPassword)) {
-            return ErrorResponse.builder()
-                    .message("Las contraseñas no coinciden")
-                    .status(400)
-                    .error("Bad Request")
-                    .path("/auth/new-password/" + token)
-                    .build();
-        }
-
-        if (userBean.passwordEncoder().matches(password, user.getPassword())) {
-            return ErrorResponse.builder()
-                    .message("La contraseña no puede ser igual a la anterior")
+                    .message("El usuario no cuenta con un código de verificación")
                     .status(400)
                     .error("Bad Request")
                     .path("/auth/new-password/" + token)
@@ -298,9 +238,9 @@ public class AuthService {
         user.setRecoveryPassword(false);
         user.setPassword(userBean.passwordEncoder().encode(password));
 
-        userRepository.save(user);
-
         emailSender.changePasswordEmail(user.getEmail(), user.getName());
+
+        userRepository.save(user);
 
         return Map.of("message", "Contraseña cambiada exitosamente");
     }

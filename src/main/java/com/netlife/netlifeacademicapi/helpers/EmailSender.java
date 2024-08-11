@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -108,9 +107,9 @@ public class EmailSender {
             .replace("{{first_message}}", "Tu cuenta ha sido creada exitosamente.")
             .replace("{{second_message}}", "Nos emociona tenerte en nuestra comunidad de aprendizaje.")
             .replace("{{third_message}}", "Ante cualquier duda, no dudes en contactar al soporte técnico.")
-            .replace("{{fourth_message}}", "Para comenzar a disfrutar de nuestros servicios, inicia sesión:")
-            .replace("{{button_text}}", "Iniciar sesión")
-            .replace("{{url}}", frontendUrl + "/auth/login");
+            .replace("{{fourth_message}}", "Para comenzar a disfrutar de nuestros servicios, puedes ir al inicio aquí:")
+            .replace("{{button_text}}", "Ir al inicio de Netlife Academic")
+            .replace("{{url}}", frontendUrl + "/home");
 
 
             helper.setText(htmlMessage, true);

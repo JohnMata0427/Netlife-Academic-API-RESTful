@@ -27,20 +27,20 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
-        Object loggedUser = authService.loginUser(user.getEmail(), user.getPassword());
+    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+        Object loggedUser = authService.loginUser(body.get("email"), body.get("password"));
         return ResponseEntity.status(loggedUser instanceof ErrorResponse ? 401 : 200).body(loggedUser);
     }
 
     @PostMapping("/recovery-password")
-    public ResponseEntity<?> recoveryPassword(@RequestBody User user) {
-        Object response = authService.recoveryPassword(user.getEmail());
+    public ResponseEntity<?> recoveryPassword(@RequestBody Map<String, String> body) {
+        Object response = authService.recoveryPassword(body.get("email"));
         return ResponseEntity.status(response instanceof ErrorResponse ? 400 : 200).body(response);
     }
 
     @PostMapping("/verify-code")
-    public ResponseEntity<?> verifyUserCode(@RequestParam String token, @RequestBody User user) {
-        Object response = authService.verifyUserCode(user.getVerificationCode(), token);
+    public ResponseEntity<?> verifyUserCode(@RequestParam String token, @RequestBody Map<String, String> body) {
+        Object response = authService.verifyUserCode(body.get("verificationCode"), token);
         return ResponseEntity.status(response instanceof ErrorResponse ? 400 : 200).body(response);
     }
 

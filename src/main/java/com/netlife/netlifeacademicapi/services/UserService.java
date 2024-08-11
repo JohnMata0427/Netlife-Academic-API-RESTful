@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -69,18 +68,15 @@ public class UserService {
                     .build();
         }
 
-        if (email == null) {
-            return ErrorResponse.builder()
-                    .message("El correo es requerido")
-                    .status(400)
-                    .error("Bad Request")
-                    .path("/users")
-                    .build();
-        }
-
         User user = User.builder()
                 .id(UUID.randomUUID().toString())
                 .imageUrl("https://res.cloudinary.com/ddcs9xxid/image/upload/v1720924124/profile_icbsmd.png")
+                .name("Usuario")
+                .lastname("Nuevo")
+                .company("Netlife")
+                .level("Colocar nivel")
+                .area("Colocar área")
+                .position("Colocar cargo")
                 .email(email)
                 .role(role)
                 .password(userBean.passwordEncoder().encode(UUID.randomUUID().toString().substring(0, 8)))
@@ -113,20 +109,15 @@ public class UserService {
 
         if (request.getName() != null) user.setName(request.getName());
         if (request.getLastname() != null) user.setLastname(request.getLastname());
-        if (request.getPassword() != null) user.setPassword(userBean.passwordEncoder().encode(request.getPassword()));
-        if (request.getRole() != null) user.setRole(request.getRole());
         if (request.getCompany() != null) user.setCompany(request.getCompany());
         if (request.getLevel() != null) user.setLevel(request.getLevel());
         if (request.getArea() != null) user.setArea(request.getArea());
         if (request.getPosition() != null) user.setPosition(request.getPosition());
         if (request.getBirthdate() != null) user.setBirthdate(request.getBirthdate());
         if (request.getState() != null) user.setState(request.getState());
-        if (request.getImageUrl() != null) user.setImageUrl(request.getImageUrl());
         if (request.isDeleted()) user.setDeleted(!request.isDeleted());
-        if (request.getPoints() > 0) user.setPoints(request.getPoints()); 
         
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-
         emailSender.profileUpdatedEmail(user.getEmail(), user.getName());
 
         return userRepository.save(user);
@@ -150,24 +141,14 @@ public class UserService {
                     .build();
         }
 
-        if (email == null) {
-            return ErrorResponse.builder()
-                    .message("El correo es requerido")
-                    .status(400)
-                    .error("Bad Request")
-                    .path("/users/lock-user")
-                    .build();
-        }
-
         User user = userRepository.findByEmail(email).get();
         user.setDeleted(true);
         user.setActive(false);
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
-        userRepository.save(user);
-
         emailSender.accountDeactivatedEmail(email, user.getName());
-
+        userRepository.save(user);
+        
         return Map.of("message", "El usuario " + user.getEmail() + " ha sido eliminado correctamente");
     }
 }
