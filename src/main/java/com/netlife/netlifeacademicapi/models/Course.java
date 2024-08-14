@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -18,11 +19,11 @@ public class Course {
 
     private String name;
 
-    private String description;
-
     private String imageUrl;
 
-    private String teacher_id;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id", referencedColumnName = "id")
+    private User teacher_id;
 
     @ManyToMany(mappedBy = "courses")
     private List<User> students;

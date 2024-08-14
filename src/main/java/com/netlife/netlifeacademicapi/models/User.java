@@ -63,10 +63,7 @@ public class User implements UserDetails {
 
     private boolean deleted;
 
-    @ManyToMany(
-        fetch = FetchType.EAGER,
-        cascade = CascadeType.ALL
-    )
+    @ManyToMany
     @JoinTable(
         name = "users_courses",
         joinColumns = @JoinColumn(name = "user_id"),
