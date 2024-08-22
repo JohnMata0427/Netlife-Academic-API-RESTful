@@ -159,8 +159,12 @@ public class AuthService {
         String token = userBean.generateToken();
         String verificationCode = ((Math.random() * 99999) + 100000 + "").substring(0, 6);
 
+        System.out.println("Token: " + token);
+        System.out.println("Verification Code: " + verificationCode);
+
         user.setToken(token);
         user.setVerificationCode(verificationCode);
+        user.setRecoveryPassword(true);
 
         userRepository.save(user);
         
@@ -203,7 +207,6 @@ public class AuthService {
         }
 
         user.setVerificationCode(null);
-        user.setRecoveryPassword(true);
 
         userRepository.save(user);
 
@@ -228,6 +231,15 @@ public class AuthService {
         if (!user.isRecoveryPassword()) {
             return ErrorResponse.builder()
                     .message("El usuario no cuenta con un código de verificación")
+                    .status(400)
+                    .error("Bad Request")
+                    .path("/auth/new-password/" + token)
+                    .build();
+        }
+
+        if (user.getVerificationCode() != null) {
+            return ErrorResponse.builder()
+                    .message("El usuario no ha verificado el código de verificación")
                     .status(400)
                     .error("Bad Request")
                     .path("/auth/new-password/" + token)

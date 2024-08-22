@@ -78,7 +78,7 @@ public class EmailSender {
             .replace("{{third_message}}", "Haz clic en el siguiente enlace para restablecer tu contraseña:")
             .replace("{{fourth_message}}", "Si no solicitaste restablecer tu contraseña, ignora este mensaje y sigue disfrutando de nuestros servicios.")
             .replace("{{button_text}}", "Restablecer contraseña")
-            .replace("{{url}}", frontendUrl + "/auth/verify-code/" + token);
+            .replace("{{url}}", frontendUrl + "/auth/verify-code?t=" + token);
 
             helper.setText(htmlMessage, true);
 
