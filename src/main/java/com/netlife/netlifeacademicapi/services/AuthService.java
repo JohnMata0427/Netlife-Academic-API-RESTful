@@ -159,14 +159,14 @@ public class AuthService {
         String token = userBean.generateToken();
         String verificationCode = ((Math.random() * 99999) + 100000 + "").substring(0, 6);
 
-        System.out.println("Token: " + token);
-        System.out.println("Verification Code: " + verificationCode);
-
         user.setToken(token);
         user.setVerificationCode(verificationCode);
         user.setRecoveryPassword(true);
 
         userRepository.save(user);
+
+        System.out.println("Token: " + token);
+        System.out.println("Verification Code: " + verificationCode);
         
         emailSender.recoveryPasswordEmail(email, user.getName(), verificationCode, token);
 

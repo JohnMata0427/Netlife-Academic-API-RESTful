@@ -2,7 +2,6 @@ package com.netlife.netlifeacademicapi.helpers;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +21,10 @@ public class EmailSender {
     @Autowired
     private JavaMailSender mailSender;
 
-    private final Path templatePath;
-    
+    private final String htmlTemplate;
+
     private EmailSender() throws Exception {
-        this.templatePath = Paths.get(getClass().getClassLoader().getResource("email-template.html").toURI());
+        this.htmlTemplate = new String(Files.readAllBytes(Paths.get("src/main/resources/email-template.html")), StandardCharsets.UTF_8);
     }
 
     public void verificationCodeEmail(String toUserMail, String verificationCode) {
@@ -35,8 +34,6 @@ public class EmailSender {
 
             helper.setTo(toUserMail);
             helper.setSubject("Código de verificación de Acceso a Netlife Academic");
-
-            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
 
             String htmlMessage = htmlTemplate
             .replace("{{title}}", "Código de verificación de Acceso a Netlife Academic")
@@ -67,8 +64,6 @@ public class EmailSender {
             helper.setTo(toUserMail);
             helper.setSubject("Recuperación de contraseña de Netlife Academic");
 
-            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
-
             String htmlMessage = htmlTemplate
             .replace("{{title}}", "Recibimos tu solicitud para restablecer contraseña")
             .replace("{{verificationCode}}", verificationCode)
@@ -98,8 +93,6 @@ public class EmailSender {
             helper.setTo(toUserMail);
             helper.setSubject("Bienvenido a Netlife Academic");
 
-            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
-
             String htmlMessage = htmlTemplate
             .replace("{{title}}", "Bienvenido a Netlife Academic")
             .replace("{{verificationCode}}", "")
@@ -110,7 +103,6 @@ public class EmailSender {
             .replace("{{fourth_message}}", "Para comenzar a disfrutar de nuestros servicios, puedes ir al inicio aquí:")
             .replace("{{button_text}}", "Ir al inicio de Netlife Academic")
             .replace("{{url}}", frontendUrl + "/home");
-
 
             helper.setText(htmlMessage, true);
 
@@ -129,8 +121,6 @@ public class EmailSender {
 
             helper.setTo(toUserMail);
             helper.setSubject("Cambio de contraseña de Netlife Academic");
-
-            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
 
             String htmlMessage = htmlTemplate
             .replace("{{title}}", "Cambio de contraseña de Netlife Academic")
@@ -161,8 +151,6 @@ public class EmailSender {
             helper.setTo(toUserMail);
             helper.setSubject("Cuenta bloqueada de Netlife Academic");
 
-            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
-
             String htmlMessage = htmlTemplate
             .replace("{{title}}", "Cuenta bloqueada de Netlife Academic")
             .replace("{{verificationCode}}", "")
@@ -192,8 +180,6 @@ public class EmailSender {
             helper.setTo(toUserMail);
             helper.setSubject("Actualización de perfil de Netlife Academic");
 
-            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
-
             String htmlMessage = htmlTemplate
             .replace("{{title}}", "Actualización de perfil de Netlife Academic")
             .replace("{{verificationCode}}", "")
@@ -222,8 +208,6 @@ public class EmailSender {
 
             helper.setTo(toUserMails);
             helper.setSubject(subject);
-
-            String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
 
             String htmlMessage = htmlTemplate
             .replace("{{title}}", subject)

@@ -1,4 +1,4 @@
-# Created at 2024-08-22T17:55:43.396
+# Created at 2024-08-22T23:34:09.364
 Boot Manifest-JAR contains absolute paths in classpath 'D:\Netlife-Academic-API-RESTful\target\test-classes'
 Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
 'other' has different root
