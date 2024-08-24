@@ -1,1 +1,2 @@
 . filter=lfs diff=lfs merge=lfs -text
+target/netlife-academic-api-0.0.1-SNAPSHOT.jar filter=lfs diff=lfs merge=lfs -text
