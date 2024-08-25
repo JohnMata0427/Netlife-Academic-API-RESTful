@@ -3,5 +3,25 @@ services:
     name: netlife-academic-api
     env: docker
     plan: free
-    dockerfilePath: Dockerfile
-    dockerComposePath: docker-compose.yml
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: CLOUDINARY_API_KEY
+        value: ${CLOUDINARY_API_KEY}
+      - key: CLOUDINARY_API_SECRET
+        value: ${CLOUDINARY_API_SECRET}
+      - key: CLOUDINARY_CLOUD_NAME
+        value: ${CLOUDINARY_CLOUD_NAME}
+      - key: DATABASE_PASS
+        value: ${DATABASE_PASS}
+      - key: DATABASE_USER
+        value: ${DATABASE_USER}
+      - key: DATABASE_URL
+        value: ${DATABASE_URL}
+      - key: EMAIL_PASS
+        value: ${EMAIL_PASS}
+      - key: EMAIL_USER
+        value: ${EMAIL_USER}
+      - key: FRONTEND_URL
+        value: ${FRONTEND_URL}
+      - key: JWT_SECRET
+        value: ${JWT_SECRET}
