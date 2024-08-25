@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: netlife-academic-api
+    env: docker
+    plan: free
+    dockerfilePath: Dockerfile
+    dockerComposePath: docker-compose.yml
