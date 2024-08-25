@@ -23,9 +23,10 @@ public class AnnouncementEmailSender {
     private JavaMailSender mailSender;
 
     private final Path templatePath;
-    
+
     private AnnouncementEmailSender() throws Exception {
-        this.templatePath = Paths.get(getClass().getClassLoader().getResource("announcement-email-template.html").toURI());
+        this.templatePath = Paths
+                .get(getClass().getClassLoader().getResource("announcement-email-template.html").toURI());
     }
 
     public void announcementEmail(String[] toUserMails, String subject, String content, String role) {
@@ -36,16 +37,19 @@ public class AnnouncementEmailSender {
             helper.setTo(toUserMails);
             helper.setSubject(subject);
 
-            if (role.equals("ALL")) role = "Usuarios";
-            else if (role.equals("STUDENT")) role = "Estudiantes";
-            else if (role.equals("TEACHER")) role = "Docentes";
+            if (role.equals("ALL"))
+                role = "Usuarios";
+            else if (role.equals("STUDENT"))
+                role = "Estudiantes";
+            else if (role.equals("TEACHER"))
+                role = "Docentes";
 
             String htmlTemplate = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
 
             String htmlMessage = htmlTemplate
-            .replace("{{title}}", subject)
-            .replace("{{role}}" , role)
-            .replace("{{message}}", content);
+                    .replace("{{title}}", subject)
+                    .replace("{{role}}", role)
+                    .replace("{{message}}", content);
 
             helper.setText(htmlMessage, true);
 

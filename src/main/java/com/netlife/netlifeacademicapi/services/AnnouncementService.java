@@ -38,7 +38,8 @@ public class AnnouncementService {
     }
 
     public Object createAnnouncement(Announcement announcement) {
-        if (announcement.getSubject().isEmpty() || announcement.getContent().isEmpty() || announcement.getType().isEmpty()
+        if (announcement.getSubject().isEmpty() || announcement.getContent().isEmpty()
+                || announcement.getType().isEmpty()
                 || announcement.getRole().isEmpty() || announcement.getState().isEmpty()) {
             return ErrorResponse.builder().message("Todos los campos son requeridos").status(400).error("Bad Request")
                     .path("/api/announcements").build();
@@ -65,8 +66,9 @@ public class AnnouncementService {
             String[] userEmails;
 
             // userEmails = (announcement.getRole() == "ALL"
-            //         ? userRepository.findAllEmails()
-            //         : userRepository.findEmails(announcement.getRole(), announcement.getExcludedEmails())).toArray(new String[0]);
+            // ? userRepository.findAllEmails()
+            // : userRepository.findEmails(announcement.getRole(),
+            // announcement.getExcludedEmails())).toArray(new String[0]);
 
             userEmails = userRepository.findAllEmails().toArray(new String[0]);
 

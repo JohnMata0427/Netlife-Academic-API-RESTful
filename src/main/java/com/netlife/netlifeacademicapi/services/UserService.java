@@ -42,7 +42,7 @@ public class UserService {
     public Optional<User> getUserById(String id) {
         return userRepository.findById(id);
     }
-    
+
     @Transactional
     public Object getRankedUsers() {
         Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "points"));
@@ -107,16 +107,25 @@ public class UserService {
 
         User user = userRepository.findById(id).get();
 
-        if (request.getName() != null) user.setName(request.getName());
-        if (request.getLastname() != null) user.setLastname(request.getLastname());
-        if (request.getCompany() != null) user.setCompany(request.getCompany());
-        if (request.getLevel() != null) user.setLevel(request.getLevel());
-        if (request.getArea() != null) user.setArea(request.getArea());
-        if (request.getPosition() != null) user.setPosition(request.getPosition());
-        if (request.getBirthdate() != null) user.setBirthdate(request.getBirthdate());
-        if (request.getState() != null) user.setState(request.getState());
-        if (request.isDeleted()) user.setDeleted(!request.isDeleted());
-        
+        if (request.getName() != null)
+            user.setName(request.getName());
+        if (request.getLastname() != null)
+            user.setLastname(request.getLastname());
+        if (request.getCompany() != null)
+            user.setCompany(request.getCompany());
+        if (request.getLevel() != null)
+            user.setLevel(request.getLevel());
+        if (request.getArea() != null)
+            user.setArea(request.getArea());
+        if (request.getPosition() != null)
+            user.setPosition(request.getPosition());
+        if (request.getBirthdate() != null)
+            user.setBirthdate(request.getBirthdate());
+        if (request.getState() != null)
+            user.setState(request.getState());
+        if (request.isDeleted())
+            user.setDeleted(!request.isDeleted());
+
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         emailSender.profileUpdatedEmail(user.getEmail(), user.getName());
 
@@ -125,7 +134,8 @@ public class UserService {
 
     @Transactional
     public boolean deleteUserData(String id) {
-        if (!userRepository.existsById(id)) return false;
+        if (!userRepository.existsById(id))
+            return false;
         userRepository.deleteById(id);
         return true;
     }
@@ -148,7 +158,7 @@ public class UserService {
 
         emailSender.accountDeactivatedEmail(email, user.getName());
         userRepository.save(user);
-        
+
         return Map.of("message", "El usuario " + user.getEmail() + " ha sido eliminado correctamente");
     }
 }

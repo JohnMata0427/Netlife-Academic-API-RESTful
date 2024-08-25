@@ -48,7 +48,6 @@ public class JWTService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-
     public String getUsernameFromToken(String token) {
         return getClaim(token, Claims::getSubject);
     }
@@ -72,11 +71,11 @@ public class JWTService {
         return claimsResolver.apply(claims);
     }
 
-    private Date getExpiration(String token){
+    private Date getExpiration(String token) {
         return getClaim(token, Claims::getExpiration);
     }
 
-    private boolean isTokenExpired(String token){
+    private boolean isTokenExpired(String token) {
         return getExpiration(token).before(new Date());
     }
 }

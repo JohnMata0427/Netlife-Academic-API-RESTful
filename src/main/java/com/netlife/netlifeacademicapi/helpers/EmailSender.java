@@ -23,7 +23,9 @@ public class EmailSender {
     private final String htmlTemplate;
 
     private EmailSender() throws Exception {
-        this.htmlTemplate = (Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("email-template.html").toURI()))).toString();
+        this.htmlTemplate = (Files
+                .readAllBytes(Paths.get(getClass().getClassLoader().getResource("email-template.html").toURI())))
+                .toString();
     }
 
     public void verificationCodeEmail(String toUserMail, String verificationCode) {
@@ -35,15 +37,16 @@ public class EmailSender {
             helper.setSubject("Código de verificación de Acceso a Netlife Academic");
 
             String htmlMessage = htmlTemplate
-            .replace("{{title}}", "Código de verificación de Acceso a Netlife Academic")
-            .replace("{{verificationCode}}", verificationCode)
-            .replace("{{name}}", "")
-            .replace("{{first_message}}", "Bienvenido a NetLife Academic")
-            .replace("{{second_message}}", "Para registrar tu cuenta, utiliza el siguiente código de verificación:")
-            .replace("{{third_message}}", "Nos emociona tenerte en nuestra comunidad de aprendizaje.")
-            .replace("{{fourth_message}}", "Ante cualquier duda, no dudes en contactar al soporte técnico.")
-            .replace("{{button_text}}", "Registrate aquí")
-            .replace("{{url}}", frontendUrl + "/auth/register");
+                    .replace("{{title}}", "Código de verificación de Acceso a Netlife Academic")
+                    .replace("{{verificationCode}}", verificationCode)
+                    .replace("{{name}}", "")
+                    .replace("{{first_message}}", "Bienvenido a NetLife Academic")
+                    .replace("{{second_message}}",
+                            "Para registrar tu cuenta, utiliza el siguiente código de verificación:")
+                    .replace("{{third_message}}", "Nos emociona tenerte en nuestra comunidad de aprendizaje.")
+                    .replace("{{fourth_message}}", "Ante cualquier duda, no dudes en contactar al soporte técnico.")
+                    .replace("{{button_text}}", "Registrate aquí")
+                    .replace("{{url}}", frontendUrl + "/auth/register");
 
             helper.setText(htmlMessage, true);
 
@@ -64,15 +67,17 @@ public class EmailSender {
             helper.setSubject("Recuperación de contraseña de Netlife Academic");
 
             String htmlMessage = htmlTemplate
-            .replace("{{title}}", "Recibimos tu solicitud para restablecer contraseña")
-            .replace("{{verificationCode}}", verificationCode)
-            .replace("{{name}}", user)
-            .replace("{{first_message}}", "Recibimos tu solicitud para restablecer tu contraseña.")
-            .replace("{{second_message}}", "Para restablecer tu contraseña, utiliza el siguiente código de validación:")
-            .replace("{{third_message}}", "Haz clic en el siguiente enlace para restablecer tu contraseña:")
-            .replace("{{fourth_message}}", "Si no solicitaste restablecer tu contraseña, ignora este mensaje y sigue disfrutando de nuestros servicios.")
-            .replace("{{button_text}}", "Restablecer contraseña")
-            .replace("{{url}}", frontendUrl + "/auth/verify-code?t=" + token);
+                    .replace("{{title}}", "Recibimos tu solicitud para restablecer contraseña")
+                    .replace("{{verificationCode}}", verificationCode)
+                    .replace("{{name}}", user)
+                    .replace("{{first_message}}", "Recibimos tu solicitud para restablecer tu contraseña.")
+                    .replace("{{second_message}}",
+                            "Para restablecer tu contraseña, utiliza el siguiente código de validación:")
+                    .replace("{{third_message}}", "Haz clic en el siguiente enlace para restablecer tu contraseña:")
+                    .replace("{{fourth_message}}",
+                            "Si no solicitaste restablecer tu contraseña, ignora este mensaje y sigue disfrutando de nuestros servicios.")
+                    .replace("{{button_text}}", "Restablecer contraseña")
+                    .replace("{{url}}", frontendUrl + "/auth/verify-code?t=" + token);
 
             helper.setText(htmlMessage, true);
 
@@ -93,15 +98,16 @@ public class EmailSender {
             helper.setSubject("Bienvenido a Netlife Academic");
 
             String htmlMessage = htmlTemplate
-            .replace("{{title}}", "Bienvenido a Netlife Academic")
-            .replace("{{verificationCode}}", "")
-            .replace("{{name}}", username)
-            .replace("{{first_message}}", "Tu cuenta ha sido creada exitosamente.")
-            .replace("{{second_message}}", "Nos emociona tenerte en nuestra comunidad de aprendizaje.")
-            .replace("{{third_message}}", "Ante cualquier duda, no dudes en contactar al soporte técnico.")
-            .replace("{{fourth_message}}", "Para comenzar a disfrutar de nuestros servicios, puedes ir al inicio aquí:")
-            .replace("{{button_text}}", "Ir al inicio de Netlife Academic")
-            .replace("{{url}}", frontendUrl + "/home");
+                    .replace("{{title}}", "Bienvenido a Netlife Academic")
+                    .replace("{{verificationCode}}", "")
+                    .replace("{{name}}", username)
+                    .replace("{{first_message}}", "Tu cuenta ha sido creada exitosamente.")
+                    .replace("{{second_message}}", "Nos emociona tenerte en nuestra comunidad de aprendizaje.")
+                    .replace("{{third_message}}", "Ante cualquier duda, no dudes en contactar al soporte técnico.")
+                    .replace("{{fourth_message}}",
+                            "Para comenzar a disfrutar de nuestros servicios, puedes ir al inicio aquí:")
+                    .replace("{{button_text}}", "Ir al inicio de Netlife Academic")
+                    .replace("{{url}}", frontendUrl + "/home");
 
             helper.setText(htmlMessage, true);
 
@@ -122,15 +128,15 @@ public class EmailSender {
             helper.setSubject("Cambio de contraseña de Netlife Academic");
 
             String htmlMessage = htmlTemplate
-            .replace("{{title}}", "Cambio de contraseña de Netlife Academic")
-            .replace("{{verificationCode}}", "")
-            .replace("{{name}}", username)
-            .replace("{{first_message}}", "Tu contraseña ha sido cambiada exitosamente.")
-            .replace("{{second_message}}", "Tu información personal es segura con nosotros.")
-            .replace("{{third_message}}", "Si no realizaste estos cambios, contacta a soporte técnico.")
-            .replace("{{fourth_message}}", "Para comenzar a disfrutar de nuestros servicios, inicia sesión:")
-            .replace("{{button_text}}", "Iniciar sesión")
-            .replace("{{url}}", frontendUrl + "/auth/login");
+                    .replace("{{title}}", "Cambio de contraseña de Netlife Academic")
+                    .replace("{{verificationCode}}", "")
+                    .replace("{{name}}", username)
+                    .replace("{{first_message}}", "Tu contraseña ha sido cambiada exitosamente.")
+                    .replace("{{second_message}}", "Tu información personal es segura con nosotros.")
+                    .replace("{{third_message}}", "Si no realizaste estos cambios, contacta a soporte técnico.")
+                    .replace("{{fourth_message}}", "Para comenzar a disfrutar de nuestros servicios, inicia sesión:")
+                    .replace("{{button_text}}", "Iniciar sesión")
+                    .replace("{{url}}", frontendUrl + "/auth/login");
 
             helper.setText(htmlMessage, true);
 
@@ -151,15 +157,15 @@ public class EmailSender {
             helper.setSubject("Cuenta bloqueada de Netlife Academic");
 
             String htmlMessage = htmlTemplate
-            .replace("{{title}}", "Cuenta bloqueada de Netlife Academic")
-            .replace("{{verificationCode}}", "")
-            .replace("{{name}}", username)
-            .replace("{{first_message}}", "Lamentamos informarte que tu cuenta ha sido bloqueada.")
-            .replace("{{second_message}}", "Ha sido un placer tenerte en nuestra comunidad de aprendizaje.")
-            .replace("{{third_message}}", "Si crees que esto es un error, contacta a soporte técnico.")
-            .replace("{{fourth_message}}", "Haz clic en el siguiente enlace para contactar a soporte:")
-            .replace("{{button_text}}", "Contactar soporte")
-            .replace("{{url}}", frontendUrl + "/contact");
+                    .replace("{{title}}", "Cuenta bloqueada de Netlife Academic")
+                    .replace("{{verificationCode}}", "")
+                    .replace("{{name}}", username)
+                    .replace("{{first_message}}", "Lamentamos informarte que tu cuenta ha sido bloqueada.")
+                    .replace("{{second_message}}", "Ha sido un placer tenerte en nuestra comunidad de aprendizaje.")
+                    .replace("{{third_message}}", "Si crees que esto es un error, contacta a soporte técnico.")
+                    .replace("{{fourth_message}}", "Haz clic en el siguiente enlace para contactar a soporte:")
+                    .replace("{{button_text}}", "Contactar soporte")
+                    .replace("{{url}}", frontendUrl + "/contact");
 
             helper.setText(htmlMessage, true);
 
@@ -180,15 +186,15 @@ public class EmailSender {
             helper.setSubject("Actualización de perfil de Netlife Academic");
 
             String htmlMessage = htmlTemplate
-            .replace("{{title}}", "Actualización de perfil de Netlife Academic")
-            .replace("{{verificationCode}}", "")
-            .replace("{{name}}", username)
-            .replace("{{first_message}}", "Tu perfil ha sido actualizado exitosamente.")
-            .replace("{{second_message}}", "Tu información personal es segura con nosotros.")
-            .replace("{{third_message}}", "Si no realizaste estos cambios, contacta a soporte técnico.")
-            .replace("{{fourth_message}}", "Puedes ver tus cambios en tu perfil:")
-            .replace("{{button_text}}", "Ver perfil")
-            .replace("{{url}}", frontendUrl + "/mi-perfil");
+                    .replace("{{title}}", "Actualización de perfil de Netlife Academic")
+                    .replace("{{verificationCode}}", "")
+                    .replace("{{name}}", username)
+                    .replace("{{first_message}}", "Tu perfil ha sido actualizado exitosamente.")
+                    .replace("{{second_message}}", "Tu información personal es segura con nosotros.")
+                    .replace("{{third_message}}", "Si no realizaste estos cambios, contacta a soporte técnico.")
+                    .replace("{{fourth_message}}", "Puedes ver tus cambios en tu perfil:")
+                    .replace("{{button_text}}", "Ver perfil")
+                    .replace("{{url}}", frontendUrl + "/mi-perfil");
 
             helper.setText(htmlMessage, true);
 
@@ -200,7 +206,8 @@ public class EmailSender {
         }
     }
 
-    public void announcementEmail(String[] toUserMails, String subject, String content, String type, String role, boolean guest, String state) {
+    public void announcementEmail(String[] toUserMails, String subject, String content, String type, String role,
+            boolean guest, String state) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
@@ -209,9 +216,9 @@ public class EmailSender {
             helper.setSubject(subject);
 
             String htmlMessage = htmlTemplate
-            .replace("{{title}}", subject)
-            .replace("{{role}}" , role)
-            .replace("{{message}}", content);
+                    .replace("{{title}}", subject)
+                    .replace("{{role}}", role)
+                    .replace("{{message}}", content);
 
             helper.setText(htmlMessage, true);
 

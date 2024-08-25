@@ -1,9 +1,11 @@
 com\netlife\netlifeacademicapi\models\Announcement$AnnouncementBuilder.class
 com\netlife\netlifeacademicapi\models\User.class
+com\netlife\netlifeacademicapi\services\CourseService.class
 com\netlife\netlifeacademicapi\helpers\EmailSender.class
 com\netlife\netlifeacademicapi\models\Course_Student.class
 com\netlife\netlifeacademicapi\NetlifeAcademicApiApplication.class
 com\netlife\netlifeacademicapi\services\CloudinaryService.class
+com\netlife\netlifeacademicapi\controllers\CourseController.class
 com\netlife\netlifeacademicapi\controllers\AnnouncementController.class
 com\netlife\netlifeacademicapi\models\Course_Student$Course_StudentBuilder.class
 com\netlife\netlifeacademicapi\models\ErrorResponse$ErrorResponseBuilder.class
@@ -16,6 +18,7 @@ com\netlife\netlifeacademicapi\config\SecurityConfig.class
 com\netlife\netlifeacademicapi\helpers\AnnouncementEmailSender.class
 com\netlife\netlifeacademicapi\services\AnnouncementService.class
 com\netlife\netlifeacademicapi\helpers\JWTAuth.class
+com\netlife\netlifeacademicapi\repositories\ICourseRepository.class
 com\netlife\netlifeacademicapi\services\AuthService.class
 com\netlife\netlifeacademicapi\models\Course.class
 com\netlife\netlifeacademicapi\controllers\AuthController.class

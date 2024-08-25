@@ -64,11 +64,7 @@ public class User implements UserDetails {
     private boolean deleted;
 
     @ManyToMany
-    @JoinTable(
-        name = "users_courses",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
+    @JoinTable(name = "users_courses", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
     private List<Course> courses;
 
     private List<String> certificates;

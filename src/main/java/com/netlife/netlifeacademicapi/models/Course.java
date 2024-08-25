@@ -19,7 +19,19 @@ public class Course {
 
     private String name;
 
+    private String category;
+
     private String imageUrl;
+
+    private String description;
+
+    private int duration;
+
+    private String presentation;
+
+    private String objectives, skills, attitudes;
+
+    private List<String> modules;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id", referencedColumnName = "id")
@@ -29,6 +41,8 @@ public class Course {
     private List<User> students;
 
     private Timestamp createdAt;
+
+    private Timestamp finishAt;
 
     private Timestamp updatedAt;
 }

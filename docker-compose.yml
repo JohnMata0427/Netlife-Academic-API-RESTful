@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  netlife-academic-api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      CLOUDAINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDAINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      CLOUDAINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      DATABASE_PASS: ${DATABASE_PASS}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_URL: ${DATABASE_URL}
+      EMAIL_PASS: ${EMAIL_PASS}
+      EMAIL_USER: ${EMAIL_USER}
+      FRONTEND_URL: ${FRONTEND_URL}
+      JWT_SECRET: ${JWT_SECRET}
+    restart: always

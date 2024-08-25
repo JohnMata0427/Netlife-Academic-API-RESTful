@@ -76,7 +76,7 @@ public class AuthService {
                     .error("Bad Request")
                     .path("/auth/register")
                     .build();
-        
+
         user.setIdentification(request.getIdentification());
         user.setName(request.getName());
         user.setLastname(request.getLastname());
@@ -86,10 +86,11 @@ public class AuthService {
         user.setActive(true);
 
         userRepository.save(user);
-        
+
         emailSender.welcomeEmail(user.getEmail(), user.getName());
 
-        return Map.of("message", "Usuario registrado exitosamente", "token", jwtService.getToken(user.getId(), user.getRole()), "id", user.getId());
+        return Map.of("message", "Usuario registrado exitosamente", "token",
+                jwtService.getToken(user.getId(), user.getRole()), "id", user.getId());
     }
 
     @Transactional
@@ -110,13 +111,13 @@ public class AuthService {
 
         if (!userBean.passwordEncoder().matches(password, user.getPassword())) {
             return ErrorResponse.builder()
-            .message("Contraseña incorrecta")
-            .status(400)
-            .error("Bad Request")
-            .path("/auth/login")
-            .build();
+                    .message("Contraseña incorrecta")
+                    .status(400)
+                    .error("Bad Request")
+                    .path("/auth/login")
+                    .build();
         }
-        
+
         if (user.isDeleted()) {
             return ErrorResponse.builder()
                     .message("La cuenta se encuentra bloqueada")
@@ -125,10 +126,12 @@ public class AuthService {
                     .path("/auth/register")
                     .build();
         }
-        
-        // authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-        return Map.of("message", "Inicio de sesión exitoso", "token", jwtService.getToken(user.getId(), user.getRole()), "id", user.getId());
+        // authenticationManager.authenticate(new
+        // UsernamePasswordAuthenticationToken(email, password));
+
+        return Map.of("message", "Inicio de sesión exitoso", "token", jwtService.getToken(user.getId(), user.getRole()),
+                "id", user.getId());
     }
 
     @Transactional
@@ -167,7 +170,7 @@ public class AuthService {
 
         System.out.println("Token: " + token);
         System.out.println("Verification Code: " + verificationCode);
-        
+
         emailSender.recoveryPasswordEmail(email, user.getName(), verificationCode, token);
 
         return Map.of("message", "Correo enviado exitosamente");
@@ -197,7 +200,7 @@ public class AuthService {
                     .build();
         }
 
-        if (!user.getVerificationCode().equals(verificationCode)){
+        if (!user.getVerificationCode().equals(verificationCode)) {
             return ErrorResponse.builder()
                     .message("El código de verificación es incorrecto")
                     .status(400)
